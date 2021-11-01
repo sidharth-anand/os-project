@@ -1,0 +1,1 @@
+gcc ./src/main.c ./src/source/app.c ./src/source/pipeTransport.c ./src/source/processes.c ./src/source/performance.c ./src/source/schedulers.c ./src/source/threadUtils.c ./src/source/utils.c -pthread -g -Wno-int-to-pointer-cast && ./a.out && rm ./a.out
