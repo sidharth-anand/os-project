@@ -1,6 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <time.h>
+#include <string.h>
+#include "../include/utils.h"
 
 #include "../include/threadUtils.h"
 
@@ -8,6 +11,8 @@ void startProcess(int pipe[2], ProcessArgs processArgs, int *running, int *finis
 {
     INIT_CONDITION(condition);
     INIT_MUTEX(mutex);
+
+    struct timespec processStart, processEnd;
 
     ThreadArgs threadArgs = {.running = running,
                              .finished = finished,
@@ -20,7 +25,9 @@ void startProcess(int pipe[2], ProcessArgs processArgs, int *running, int *finis
                          .taskFunction = taskFunction};
 
     pthread_t task_thread;
-    pthread_create(&task_thread, NULL, startTask, (void*)&taskArgs);
+    pthread_create(&task_thread, NULL, startTask, (void *)&taskArgs);
+
+    clock_gettime(CLOCK_THREAD_CPUTIME_ID, &processStart);
 
     while (!(*finished))
     {
@@ -32,27 +39,28 @@ void startProcess(int pipe[2], ProcessArgs processArgs, int *running, int *finis
         M_UNLOCK(&mutex);
     }
 
+    clock_gettime(CLOCK_THREAD_CPUTIME_ID, &processEnd);
+
     int threadRetVal;
-    pthread_join(task_thread, (void*)&threadRetVal);
+    pthread_join(task_thread, (void *)&threadRetVal);
 
     C_DESTROY(&condition);
     M_DESTROY(&mutex);
 
-    processPipeFunction(pipe, threadRetVal);
+    processPipeFunction(pipe, threadRetVal, getElapsedTime(processStart, processEnd));
 
     _exit(EXIT_SUCCESS);
 }
 
-void* startTask(void *args)
+void *startTask(void *args)
 {
-    TaskArgs* taskArgs = (TaskArgs*)args;
+    TaskArgs *taskArgs = (TaskArgs *)args;
 
     int result = taskArgs->taskFunction(taskArgs->processArgs);
 
-    
     M_LOCK(taskArgs->processArgs->threadArgs->mutex);
     *(taskArgs->processArgs->threadArgs->finished) = 1;
     M_UNLOCK(taskArgs->processArgs->threadArgs->mutex);
 
-    pthread_exit((void*)result);
+    pthread_exit((void *)result);
 }

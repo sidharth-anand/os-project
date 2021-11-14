@@ -27,7 +27,7 @@ void reportPerformance(PerformanceParameters performanceParameters[3])
         processPerfs[i] = getProcessPerformance(performanceParameters[i]);
 
     for(int i = 0; i < 3; i++)
-        printf("Process %d: %f\t%f\t%f\n", i + 1, processPerfs[i].processStart, processPerfs[i].waitingTime, processPerfs[i].turnAroundTime);
+        printf("Process %d: start - %f\t waiting - %f\t turnaround - %f\n", i + 1, processPerfs[i].processStart, processPerfs[i].waitingTime, processPerfs[i].turnAroundTime);
 
     FILE* perfFile;
     perfFile = fopen("performance/perf.txt", "wb+");

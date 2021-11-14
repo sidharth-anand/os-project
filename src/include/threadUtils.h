@@ -47,7 +47,7 @@ typedef struct _ProcessArgs
 
 } ProcessArgs;
 
-typedef void (*ProcessPipeFunction)(int pipe[2], int processResult);
+typedef void (*ProcessPipeFunction)(int pipe[2], int processResult, double elapsedTime);
 typedef int (*TaskFunction)(ProcessArgs* processArgs);
 
 typedef struct _TaskArgs

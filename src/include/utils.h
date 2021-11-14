@@ -3,7 +3,7 @@
 
 #include <time.h>
 
-int* intializeSharedMemory();
+int *intializeSharedMemory();
 
 double getElapsedTime(struct timespec start, struct timespec end);
 
