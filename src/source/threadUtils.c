@@ -7,6 +7,7 @@
 
 #include "../include/threadUtils.h"
 
+//Initializes the conditions for starting processes
 void startProcess(int pipe[2], ProcessArgs processArgs, int *running, int *finished, TaskFunction taskFunction, ProcessPipeFunction processPipeFunction)
 {
     INIT_CONDITION(condition);
@@ -52,6 +53,7 @@ void startProcess(int pipe[2], ProcessArgs processArgs, int *running, int *finis
     _exit(EXIT_SUCCESS);
 }
 
+//Initializing the tasks 
 void *startTask(void *args)
 {
     TaskArgs *taskArgs = (TaskArgs *)args;

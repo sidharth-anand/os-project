@@ -7,7 +7,8 @@
 #include "../include/performance.h"
 #include "../include/utils.h"
 
-void schedulerFCFS(int processRunning[3], int processFinished[3], double timeQuantum)
+//FCFS algorithm
+void schedulerFCFS(int processRunning[3], int processFinished[3], double timeQuantum, char* perfFilename)
 {
     struct timespec globalStart, globalEnd;
 
@@ -42,13 +43,13 @@ void schedulerFCFS(int processRunning[3], int processFinished[3], double timeQua
     for (int i = 0; i < 3; i++)
         perfParams[i].globalEnd = globalEnd;
 
-    reportPerformance(perfParams);
+    reportPerformance(perfParams, perfFilename);
 }
 
-void schedulerRoundRobin(int processRunning[3], int processFinished[3], double timeQuantum)
+//Round Robin
+void schedulerRoundRobin(int processRunning[3], int processFinished[3], double timeQuantum, char* perfFilename)
 {
     int allFinished = 0;
-    int lastIndex = 0;
 
     int processStarted[3] = {0, 0, 0};
     int processMarked[3] = {0, 0, 0};
@@ -71,29 +72,11 @@ void schedulerRoundRobin(int processRunning[3], int processFinished[3], double t
 
         for (int i = 0; i < 3; i++)
         {
-
             if (!processStarted[i])
             {
                 clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &perfParams[i].localStart);
                 processStarted[i] = 1;
             }
-
-            // if (!processFinished[i])
-            // {
-            //     processRunning[i] = 1;
-
-            //     sleep(timeQuantum);
-
-            //     processRunning[i] = 0;
-
-            //     allFinished = 0;
-            //     lastIndex = i;
-
-            //     perfParams[i].totalBoostTime += timeQuantum * 1e6;
-
-            //     if (processFinished[i])
-            //         clock_gettime(CLOCK_THREAD_CPUTIME_ID, &perfParams[i].localEnd);
-            // }
 
             if (!processFinished[i])
             {
@@ -106,7 +89,7 @@ void schedulerRoundRobin(int processRunning[3], int processFinished[3], double t
 
                 processRunning[i] = 1;
 
-                while (!processFinished[i] && elapsedTime < timeQuantum)
+                while (!processFinished[i] && elapsedTime <= timeQuantum)
                 {
                     clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &quantumEnd);
                     elapsedTime = getElapsedTime(quantumStart, quantumEnd);
@@ -131,5 +114,5 @@ void schedulerRoundRobin(int processRunning[3], int processFinished[3], double t
     for (int i = 0; i < 3; i++)
         perfParams[i].globalEnd = globalEnd;
 
-    reportPerformance(perfParams);
+    reportPerformance(perfParams, perfFilename);
 }

@@ -1,3 +1,6 @@
+/*
+    Include file for the pipeUtils.c file
+*/
 #ifndef PIPE_UTILS_H
 #define PIPE_UTILS_H
 

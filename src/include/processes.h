@@ -3,6 +3,9 @@
 
 #include "threadUtils.h"
 
+/*
+    Include file for the processes.c file
+*/
 int process1Task(ProcessArgs* processArgs);
 void process1PipeFunction(int pipe[2], int processResult, double elapsedTime);
 

@@ -4,6 +4,7 @@
 #include "../include/pipeTransport.h"
 #include "../include/pipeUtils.h"
 
+//Helper function to initialize pipe with PipeArgs
 void* listen_and_print(void* pipeArg)
 {
     int* pipe = (int*)(pipeArg);
@@ -21,6 +22,7 @@ void* listen_and_print(void* pipeArg)
     pthread_exit(0);
 }
 
+//Create a link between the processes
 void* start_listening(void* pipefdsArg)
 {
     int* pipefds_ptr = (int*)pipefdsArg;

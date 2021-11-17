@@ -4,7 +4,9 @@
 #include <pthread.h>
 
 #include "pipeUtils.h"
-
+/*
+    Include file for the threadUtils.c file
+*/
 #define INIT_MUTEX(mutex) pthread_mutex_t mutex;\
                           pthread_mutex_init(&mutex, NULL)
 

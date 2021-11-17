@@ -4,6 +4,7 @@
 #include "../include/performance.h"
 #include "../include/utils.h"
 
+//Get the performance stats from the process - Start time, Waiting Time and Turnaround Time
 ProcessPerformance getProcessPerformance(PerformanceParameters parameters)
 {
     double totalElapsedTime = getElapsedTime(parameters.globalStart, parameters.globalEnd);
@@ -17,7 +18,8 @@ ProcessPerformance getProcessPerformance(PerformanceParameters parameters)
     return processPerformance;
 } 
 
-void reportPerformance(PerformanceParameters performanceParameters[3])
+//Fetch and write the performance stats into perf.txt file
+void reportPerformance(PerformanceParameters performanceParameters[3], char* perfFilename)
 {
     sleep(1);
 
@@ -30,7 +32,7 @@ void reportPerformance(PerformanceParameters performanceParameters[3])
         printf("Process %d: start - %f\t waiting - %f\t turnaround - %f\n", i + 1, processPerfs[i].processStart, processPerfs[i].waitingTime, processPerfs[i].turnAroundTime);
 
     FILE* perfFile;
-    perfFile = fopen("performance/perf.txt", "wb+");
+    perfFile = fopen(perfFilename, "wb+");
 
     for(int i = 0; i < 3; i++)
         fprintf(perfFile, "%d-%f-%f-%f\n", i + 1, processPerfs[i].processStart, processPerfs[i].waitingTime, processPerfs[i].turnAroundTime);

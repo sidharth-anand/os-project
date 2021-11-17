@@ -5,6 +5,7 @@
 
 #include "../include/utils.h"
 
+//Initialize shared memory
 int* intializeSharedMemory()
 {
     static int zeroes[3] = {0, 0, 0}; 
@@ -15,6 +16,7 @@ int* intializeSharedMemory()
     return shmem;
 }
 
+//Calculate precisely the time between two timespec objects
 double getElapsedTime(struct timespec start, struct timespec end)
 {
     double elapsed = (end.tv_sec - start.tv_sec) * 1000000.0;

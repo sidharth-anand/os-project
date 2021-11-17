@@ -8,7 +8,9 @@
 #include <unistd.h>
 
 #include "utils.h"
-
+/*
+    Include file for the profile.c file
+*/
 #define CONCATENATE_DIRECT(X, Y) X##Y
 #define CONCATENATE(X, Y) CONCATENATE_DIRECT(X, Y)
 #define LINEVARNAME(X) CONCATENATE(X, __LINE__)

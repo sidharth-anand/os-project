@@ -12,11 +12,14 @@
 #include "../include/schedulers.h"
 #include "../include/utils.h"
 
-AppArgs appInit(int length, double timeQuantum, int scheduler, char *process2Filename, char *process3Filename)
+//Initialize the app arguments and user setting
+AppArgs appInit(int length, double timeQuantum, int scheduler, char *process2Filename, char *process3Filename, char *perfFilename)
 {
+    
     AppArgs appArgs;
 
     appArgs.length = length;
+
 
     appArgs.numbers = malloc(sizeof(int) * appArgs.length);
     for (int i = 0; i < appArgs.length; i++)
@@ -31,6 +34,9 @@ AppArgs appInit(int length, double timeQuantum, int scheduler, char *process2Fil
     appArgs.process3Filename = malloc(sizeof(char) * (strlen(process3Filename)));
     memcpy(appArgs.process3Filename, process3Filename, strlen(process3Filename));
 
+    appArgs.perfFilename = malloc(sizeof(char) * (strlen(perfFilename)));
+    memcpy(appArgs.perfFilename, perfFilename, strlen(perfFilename));
+
     if (scheduler == 1)
         appArgs.schedulerChoice = schedulerRoundRobin;
     else
@@ -41,14 +47,17 @@ AppArgs appInit(int length, double timeQuantum, int scheduler, char *process2Fil
     return appArgs;
 }
 
+//Define the pipe and task functions, create thread and shared memory and start the processes
 void appRun(AppArgs appArgs)
 {
+    //Pipe and Process IDS
     int pipefds[3][2];
     pid_t pids[3];
 
     int *processRunning = intializeSharedMemory();
     int *processFinished = intializeSharedMemory();
 
+    //Process Arguments, Task functions and Pipe FUnctions
     ProcessArgs processArgs[3] = {
         {.length = appArgs.length, .numbers = appArgs.numbers},
         {.filename = appArgs.process2Filename},
@@ -77,23 +86,27 @@ void appRun(AppArgs appArgs)
             startProcess(pipefds[i], processArgs[i], &processRunning[i], &processFinished[i], taskFunctions[i], pipeFunctions[i]);
     }
 
+    //Create thread
     pthread_t listener_thread;
     pthread_create(&listener_thread, NULL, start_listening, (void *)pipefds);
 
-    appArgs.schedulerChoice(processRunning, processFinished, appArgs.timeQuantum);
+    appArgs.schedulerChoice(processRunning, processFinished, appArgs.timeQuantum, appArgs.perfFilename);
 
     pthread_join(listener_thread, NULL);
 
     for (int i = 0; i < 3; i++)
         wait((int *)&pids[i]);
-
+    
+    //Initialize memory map
     munmap(processRunning, sizeof(int) * 3);
     munmap(processFinished, sizeof(int) * 3);
 }
 
+//Clear the memory of the variables initialized
 void appDestroy(AppArgs appArgs)
 {
     free(appArgs.numbers);
     free(appArgs.process2Filename);
     free(appArgs.process3Filename);
+    free(appArgs.perfFilename);
 }
